@@ -1,14 +1,5 @@
-﻿using System;
-using System.Activities.Statements;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
+﻿using System.Data;
 using System.Data.SqlClient;
-using System.EnterpriseServices;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Util;
 using System.Web.Configuration;
 
 namespace Utils {
@@ -24,7 +15,7 @@ namespace Utils {
         public DataAccess(string connectionString) {
             try {
                 this.connectionString = connectionString;
-            } catch (SqlException) {
+            } catch(SqlException) {
 
             }
         }
@@ -32,18 +23,17 @@ namespace Utils {
         public static string GetWebConfigConnectionString(string key) {
             return WebConfigurationManager.ConnectionStrings[key].ConnectionString;
         }
-       
+
         public SqlConnection GetConnection() {
             return connection;
         }
 
         public void Open() {
             try {
-               
                 connection = new SqlConnection();
                 connection.ConnectionString = connectionString;
                 connection.Open();
-            } catch (SqlException) {
+            } catch(SqlException) {
 
             }
         }
@@ -51,7 +41,7 @@ namespace Utils {
         public void Close() {
             try {
                 connection.Close();
-            } catch (SqlException) {
+            } catch(SqlException) {
 
             }
         }
@@ -59,7 +49,7 @@ namespace Utils {
         public void StartTransaction() {
             try {
                 transaction = connection.BeginTransaction();
-            } catch (SqlException) {
+            } catch(SqlException) {
 
             }
         }
@@ -67,7 +57,7 @@ namespace Utils {
         public void Commit() {
             try {
                 transaction.Commit();
-            } catch (SqlException) {
+            } catch(SqlException) {
                 commitFailed = true;
             }
         }
@@ -75,7 +65,7 @@ namespace Utils {
         public void Rollback() {
             try {
                 transaction.Rollback();
-            } catch (SqlException) {
+            } catch(SqlException) {
 
             }
         }
@@ -85,7 +75,7 @@ namespace Utils {
         }
 
         public bool ConnectionIsOpen() {
-            if (connection.State != ConnectionState.Closed) {
+            if(connection.State != ConnectionState.Closed) {
                 return true;
             } else {
                 return false;

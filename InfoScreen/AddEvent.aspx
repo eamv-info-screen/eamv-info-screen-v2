@@ -6,7 +6,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="topic">Emne *</label>
-                <asp:requiredfieldvalidator runat="server" id="emptyTopic" controltovalidate="topic" errormessage="Dette felt er obligatorisk" forecolor="Red" />
+                <asp:RequiredFieldValidator runat="server" ID="emptyTopic" ControlToValidate="topic" ErrorMessage="Dette felt er obligatorisk" ForeColor="Red" />
                 <input type="text" class="form-control" id="topic" placeholder="Emne" runat="server" />
             </div>
         </div>
@@ -17,43 +17,45 @@
                 <input type="text" class="form-control" id="host" placeholder="v/hvem" runat="server" />
             </div>
         </div>
+        <% if(showMultiple.Checked != true) { %>
         <div class="col-md-6 col-lg-offset-3">
             <div class="form-group">
                 <label>Start dato</label><span runat="server" id="startDatoWarning" style="color: red; visibility: hidden;"> Advarsel! Datoen ligger langt ude i fremtiden.</span>
-                <asp:calendar cssclass="event-calendar" id="startDate" runat="server" ondayrender="Calendar_DayRender1">
-                        <OtherMonthDayStyle ForeColor="LightGray"></OtherMonthDayStyle>
-                        <TitleStyle CssClass="month"></TitleStyle>
-                        <DayStyle CssClass="event-calendar-day"></DayStyle>
-                        <SelectedDayStyle CssClass="calendar-date-selected"></SelectedDayStyle>
-                    </asp:calendar>
+                <asp:Calendar CssClass="event-calendar" ID="startDate" runat="server" OnDayRender="Calendar_DayRender1">
+                    <OtherMonthDayStyle ForeColor="LightGray"></OtherMonthDayStyle>
+                    <TitleStyle CssClass="month"></TitleStyle>
+                    <DayStyle CssClass="event-calendar-day"></DayStyle>
+                    <SelectedDayStyle CssClass="calendar-date-selected"></SelectedDayStyle>
+                </asp:Calendar>
             </div>
         </div>
+        <% } %>
 
         <div class="col-md-6">
             <div class="form-group">
                 <label for="startTime">Start tidspunkt *</label>
-                <asp:customvalidator id="CustomValidator1" forecolor="Red" runat="server" />
-                <asp:requiredfieldvalidator runat="server" id="emptyStartTime" display="Dynamic" controltovalidate="startTime" errormessage="Dette felt er obligatorisk" forecolor="Red" />
+                <asp:CustomValidator ID="CustomValidator1" ForeColor="Red" runat="server" />
+                <asp:RequiredFieldValidator runat="server" ID="emptyStartTime" Display="Dynamic" ControlToValidate="startTime" ErrorMessage="Dette felt er obligatorisk" ForeColor="Red" />
                 <input type="text" id="startTime" class="form-control timepickerStart" name="timepickerStart" runat="server" />
             </div>
 
             <div class="form-group white-select">
                 <label for="rooms">Afdeling *</label>
-                <select class="form-control selectpicker show-tick" id="departmentsSelect" onchange="submitForm()" runat="server">
-                </select>
+                <asp:DropDownList class="form-control selectpicker show-tick" ID="departmentsSelect" AutoPostBack="true" runat="server">
+                </asp:DropDownList>
             </div>
         </div>
 
         <div class="col-md-6">
             <div class="form-group">
                 <label for="endTime">Slut tidspunkt *</label>
-                <asp:customvalidator id="endTimeValidator" display="Dynamic" controltovalidate="endTime" onservervalidate="EndTimeValidator" errormessage="skal være efter start tidspunkt" forecolor="Red" runat="server" />
-                <asp:requiredfieldvalidator runat="server" display="Dynamic" id="emptyEndTime" controltovalidate="endTime" errormessage="Dette felt er obligatorisk" forecolor="Red" />
+                <asp:CustomValidator ID="endTimeValidator" Display="Dynamic" ControlToValidate="endTime" OnServerValidate="EndTimeValidator" ErrorMessage="skal være efter start tidspunkt" ForeColor="Red" runat="server" />
+                <asp:RequiredFieldValidator runat="server" Display="Dynamic" ID="emptyEndTime" ControlToValidate="endTime" ErrorMessage="Dette felt er obligatorisk" ForeColor="Red" />
                 <input type="text" id="endTime" class="form-control timepickerEnd" name="timepickerEnd" runat="server" />
             </div>
             <div class="form-group white-select">
                 <label for="rooms">Lokale *</label>
-                <asp:requiredfieldvalidator runat="server" id="notChosenRoom" controltovalidate="roomsSelect" errormessage="Dette felt er obligatorisk" forecolor="Red" />
+                <asp:RequiredFieldValidator runat="server" ID="notChosenRoom" ControlToValidate="roomsSelect" ErrorMessage="Dette felt er obligatorisk" ForeColor="Red" />
                 <select class="form-control selectpicker" data-none-selected-text="Vælg lokale" multiple id="roomsSelect" runat="server">
                 </select>
             </div>
@@ -63,7 +65,22 @@
             <h3 class="text-center">Adskillige datoer/dage</h3>
         </div>
 
+        <% if(showMultiple.Checked == true) { %>
         <div class="col-md-6 col-lg-offset-3">
+            <div class="form-group">
+                <label>Datoer for aktivitet</label>
+                <asp:Calendar CssClass="event-calendar" ID="MultipleDatesCalender" runat="server" OnPreRender="MultipleDatesCalender_PreRender" OnSelectionChanged="MultipleDatesCalender_SelectionChanged" OnDayRender="Calendar_DayRender3">
+                    <OtherMonthDayStyle ForeColor="LightGray"></OtherMonthDayStyle>
+                    <TitleStyle CssClass="month"></TitleStyle>
+                    <DayStyle CssClass="event-calendar-day"></DayStyle>
+                    <SelectedDayStyle CssClass="calendar-date-selected"></SelectedDayStyle>
+                </asp:Calendar>
+            </div>
+        </div>
+        <% } %>
+
+        <%if(showMultiple.Checked == false) { %>
+        <div class="col-md-6 col-lg-offset-3 repeatDates">
             <div class="form-group">
                 <div class="form-group white-select">
                     <label for="rooms">Gentagelse</label>
@@ -78,22 +95,33 @@
                 </div>
             </div>
         </div>
+        <% } %>
 
-        <div class="col-md-6 col-lg-offset-3">
+        <div class="col-md-2">
+            <label>Valgfri datoer</label>
+            <br />
+            <label>
+                <asp:CheckBox runat="server" ID="showMultiple" type="checkbox" AutoPostBack="true" />
+            </label>
+        </div>
+
+        <%if(showMultiple.Checked == false) { %>
+        <div class="col-md-6 col-lg-offset-3 repeatDates">
             <div class="form-group">
                 <label>Slut dato</label>
-                <asp:calendar cssclass="event-calendar" id="endDate" runat="server" ondayrender="Calendar_DayRender2">
-                        <OtherMonthDayStyle ForeColor="LightGray"></OtherMonthDayStyle>
-                        <TitleStyle CssClass="month"></TitleStyle>
-                        <DayStyle CssClass="event-calendar-day"></DayStyle>
-                        <SelectedDayStyle CssClass="calendar-date-selected"></SelectedDayStyle>
-                    </asp:calendar>
+                <asp:Calendar CssClass="event-calendar" ID="endDate" runat="server" OnDayRender="Calendar_DayRender2">
+                    <OtherMonthDayStyle ForeColor="LightGray"></OtherMonthDayStyle>
+                    <TitleStyle CssClass="month"></TitleStyle>
+                    <DayStyle CssClass="event-calendar-day"></DayStyle>
+                    <SelectedDayStyle CssClass="calendar-date-selected"></SelectedDayStyle>
+                </asp:Calendar>
             </div>
         </div>
+        <% } %>
+
         <div class="col-md-12">
             <input type="hidden" value="" />
-            <button id="submitButton" type="submit" class="btn pull-right btn-warning" runat="server" onserverclick="OnFormSubmit" onclick="this.disabled=true; this.form.submit();">Opret</button>
+            <button id="submitButton" type="submit" class="btn pull-right btn-warning" runat="server" onserverclick="OnFormSubmit">Opret</button>
         </div>
     </div>
 </asp:Content>
-

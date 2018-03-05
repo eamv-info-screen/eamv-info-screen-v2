@@ -9,7 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using Utils;
 
-public partial class CloneEvent :System.Web.UI.Page {
+public partial class CloneEvent : Page {
 
     private DataAccess dataAccess = new DataAccess(DataAccess.GetWebConfigConnectionString("Infoskærm"));
     private EventsRepository eventRepository = new EventsRepository();
@@ -17,12 +17,12 @@ public partial class CloneEvent :System.Web.UI.Page {
     private WeekNumber weekNumber = new WeekNumber();
 
     protected void Page_Load(object sender, EventArgs e) {
-        if (!IsPostBack) {
+        if(!IsPostBack) {
 
             int? eventId = null;
             try {
                 eventId = int.Parse(Request.QueryString.Get("eventId"));
-            } catch (Exception) {
+            } catch(Exception) {
                 Response.Redirect("Search.aspx");
             }
 
@@ -36,7 +36,7 @@ public partial class CloneEvent :System.Web.UI.Page {
                 startDate.SelectedDate = eventEntity.FromDate.Date;
                 startDate.VisibleDate = startDate.SelectedDate;
 
-                if (eventEntity.IsCanceled == true) {
+                if(eventEntity.IsCanceled == true) {
                     canceled.Visible = true;
                 } else {
                     canceled.Visible = false;
@@ -49,7 +49,7 @@ public partial class CloneEvent :System.Web.UI.Page {
                 int departmentId = int.Parse(departmentsSelect.Items[departmentsSelect.SelectedIndex].Value);
                 PopulateRoomsSelect(dataAccess, eventRepository, departmentId);
                 SelectRooms(eventEntity.Rooms);
-            } catch (Exception) {
+            } catch(Exception) {
 
             } finally {
                 dataAccess.Close();
@@ -73,7 +73,7 @@ public partial class CloneEvent :System.Web.UI.Page {
         DateTime startDateInput = new DateTime(startDate.SelectedDate.Year, startDate.SelectedDate.Month, startDate.SelectedDate.Day,
     startTimeInput.Hour, startTimeInput.Minute, startTimeInput.Second);
 
-        if (startDateInput < DateTime.Now) {
+        if(startDateInput < DateTime.Now) {
             e.IsValid = false;
         } else {
             e.IsValid = true;
@@ -84,7 +84,7 @@ public partial class CloneEvent :System.Web.UI.Page {
         DateTime startTimeInput = DateTime.ParseExact(startTime.Value, "HH:mm", CultureInfo.InvariantCulture);
         DateTime endTimeInput = DateTime.ParseExact(endTime.Value, "HH:mm", CultureInfo.InvariantCulture);
 
-        if (endTimeInput <= startTimeInput) {
+        if(endTimeInput <= startTimeInput) {
             e.IsValid = false;
         } else {
             e.IsValid = true;
@@ -92,7 +92,7 @@ public partial class CloneEvent :System.Web.UI.Page {
     }
 
     protected void OnFormSubmit(object sender, EventArgs e) {
-        if (IsValid) {
+        if(IsValid) {
             EventEntity eventEntity = CreateEventEntityFromForm();
             this.AddCloneEvent(eventEntity);
         }
@@ -112,9 +112,9 @@ public partial class CloneEvent :System.Web.UI.Page {
             dataAccess.StartTransaction();
             dataAccess.Commit();
 
-            if (result == true)
+            if(result == true)
                 RegisterSweetAlertScriptOnSuccess();
-        } catch (Exception) {
+        } catch(Exception) {
             dataAccess.Rollback();
         } finally {
             dataAccess.Close();
@@ -142,8 +142,8 @@ public partial class CloneEvent :System.Web.UI.Page {
         eventEntity.Topic = topic.Value;
 
         List<RoomEntity> rooms = new List<RoomEntity>();
-        for (int i = 0; i < roomsSelect.Items.Count; i++) {
-            if (roomsSelect.Items[i].Selected == true) {
+        for(int i = 0; i < roomsSelect.Items.Count; i++) {
+            if(roomsSelect.Items[i].Selected == true) {
                 RoomEntity room = new RoomEntity();
                 room.Id = int.Parse(roomsSelect.Items[i].Value);
                 room.Identifier = roomsSelect.Items[i].Text;
@@ -163,8 +163,8 @@ public partial class CloneEvent :System.Web.UI.Page {
     private List<int> GetSelectedRooms() {
         List<int> rooms = new List<int>();
 
-        for (int i = 0; i < roomsSelect.Items.Count; i++) {
-            if (roomsSelect.Items[i].Selected == true) {
+        for(int i = 0; i < roomsSelect.Items.Count; i++) {
+            if(roomsSelect.Items[i].Selected == true) {
                 rooms.Add(int.Parse(roomsSelect.Items[i].Value));
             }
         }
@@ -172,18 +172,18 @@ public partial class CloneEvent :System.Web.UI.Page {
     }
 
     private void SelectRooms(List<int> rooms) {
-        foreach (int id in rooms) {
+        foreach(int id in rooms) {
             ListItem item = roomsSelect.Items.FindByValue(id.ToString());
-            if (item != null) {
+            if(item != null) {
                 item.Selected = true;
             }
         }
     }
 
     private void SelectRooms(List<RoomEntity> rooms) {
-        foreach (RoomEntity room in rooms) {
+        foreach(RoomEntity room in rooms) {
             ListItem item = roomsSelect.Items.FindByValue(room.Id.ToString());
-            if (item != null) {
+            if(item != null) {
                 item.Selected = true;
             }
         }
@@ -192,7 +192,7 @@ public partial class CloneEvent :System.Web.UI.Page {
 
     private void PopulateDepartmentsSelect(DataAccess dataAccess, EventsRepository repository) {
         List<DepartmentEntity> departments = repository.FetchAllDepartments(dataAccess);
-        foreach (DepartmentEntity department in departments) {
+        foreach(DepartmentEntity department in departments) {
             departmentsSelect.Items.Add(new ListItem(department.Name, department.Id.ToString()));
         }
         // Find and select event's department.
@@ -203,14 +203,14 @@ public partial class CloneEvent :System.Web.UI.Page {
         List<RoomEntity> rooms = repository.FetchDepartmentRooms(dataAccess, departmentId);
         // Empty the select
         roomsSelect.Items.Clear();
-        foreach (RoomEntity room in rooms) {
+        foreach(RoomEntity room in rooms) {
             roomsSelect.Items.Add(new ListItem(room.Identifier, room.Id.ToString()));
         }
     }
 
     private bool IsEventTarget(string Id) {
-        if (Request.Params["__EVENTTARGET"] != null) {
-            if (Request.Params["__EVENTTARGET"].ToString().Contains(Id)) {
+        if(Request.Params["__EVENTTARGET"] != null) {
+            if(Request.Params["__EVENTTARGET"].ToString().Contains(Id)) {
                 return true;
             }
         }
@@ -218,7 +218,7 @@ public partial class CloneEvent :System.Web.UI.Page {
     }
 
     protected void Calendar_DayRender1(object sender, DayRenderEventArgs e) {
-        if (e.Day.Date < DateTime.Now.Date || e.Day.IsOtherMonth) {
+        if(e.Day.Date < DateTime.Now.Date || e.Day.IsOtherMonth) {
             e.Day.IsSelectable = false;
             e.Cell.ForeColor = System.Drawing.Color.LightGray;
         }
@@ -229,7 +229,7 @@ public partial class CloneEvent :System.Web.UI.Page {
     }
 
     protected void Calendar_DayRender2(object sender, DayRenderEventArgs e) {
-        if (e.Day.Date < startDate.SelectedDate || e.Day.IsOtherMonth) {
+        if(e.Day.Date < startDate.SelectedDate || e.Day.IsOtherMonth) {
             e.Day.IsSelectable = false;
             e.Cell.ForeColor = System.Drawing.Color.LightGray;
         }
